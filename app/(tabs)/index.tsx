@@ -38,7 +38,7 @@ export default function RecipeDetailScreen() {
     culturalContext: "Empanadas are a staple in Latin American cuisine, with each region having its own unique variation. Dominican empanadas are known for their flaky crust and savory meat filling."
   };
 
-  const toggleIngredient = (id) => {
+  const toggleIngredient = (id: number) => {
     setSavedIngredients(prev => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
