@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,195 +7,257 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  TextInput,
   Dimensions,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
+const COLUMN_WIDTH = (width - 48) / 2;
 
-export default function RecipeDetailScreen() {
-  const [activeTab, setActiveTab] = useState('recipe');
-  const [savedIngredients, setSavedIngredients] = useState(new Set());
-  const [isSaved, setIsSaved] = useState(false);
+export default function HomeScreen() {
+  const router = useRouter();
+  
+  // Sample recipe data - each with full details
+  const recipes = [
+    {
+      id: '1',
+      title: "Abuela's Empanadas",
+      elderName: "Rosa Martinez",
+      preservedBy: "Maria Rodriguez",
+      imageUrl: "https://images.unsplash.com/photo-1625938145312-880f3b3a5d3d?w=800",
+      date: "Jun 10, 2024",
+      imageHeight: 280,
+      prepTime: "45 min",
+      servings: "6",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "2 cups all-purpose flour" },
+        { id: 2, name: "1 lb ground beef" },
+        { id: 3, name: "1 large onion, diced" },
+        { id: 4, name: "2 tsp cumin" },
+        { id: 5, name: "1 tsp paprika" },
+        { id: 6, name: "Salt and pepper to taste" }
+      ],
+      story: "My grandmother learned this recipe from her mother in the Dominican Republic. Every Sunday, the whole family would gather in her kitchen to make empanadas together. The smell of cumin and beef would fill the entire house...",
+      culturalContext: "Empanadas are a staple in Latin American cuisine, with each region having its own unique variation. Dominican empanadas are known for their flaky crust and savory meat filling."
+    },
+    {
+      id: '2',
+      title: "Nonna's Pasta Carbonara",
+      elderName: "Maria Rossi",
+      preservedBy: "Giovanni Rossi",
+      imageUrl: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+      date: "Jun 9, 2024",
+      imageHeight: 200,
+      prepTime: "30 min",
+      servings: "4",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "400g spaghetti" },
+        { id: 2, name: "200g guanciale" },
+        { id: 3, name: "4 egg yolks" },
+        { id: 4, name: "100g Pecorino Romano" },
+        { id: 5, name: "Black pepper" }
+      ],
+      story: "My Nonna made this every Sunday in Rome. She would always say 'no cream!' and taught me the secret of tempering the eggs with pasta water to create that silky sauce.",
+      culturalContext: "Carbonara is one of Rome's four classic pasta dishes. The authentic version uses guanciale (cured pork jowl), never bacon, and absolutely no cream."
+    },
+    {
+      id: '3',
+      title: "Grandma's Apple Pie",
+      elderName: "Betty Johnson",
+      preservedBy: "Sarah Johnson",
+      imageUrl: "https://images.unsplash.com/photo-1535920527002-b35e96722eb9?w=800",
+      date: "Jun 8, 2024",
+      imageHeight: 240,
+      prepTime: "2 hours",
+      servings: "8",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "6 Granny Smith apples" },
+        { id: 2, name: "2 cups all-purpose flour" },
+        { id: 3, name: "1 cup butter, cold" },
+        { id: 4, name: "3/4 cup sugar" },
+        { id: 5, name: "2 tsp cinnamon" },
+        { id: 6, name: "1/4 tsp nutmeg" }
+      ],
+      story: "Grandma Betty won the county fair with this pie three years in a row. Her secret? A tablespoon of apple cider vinegar in the crust for extra flakiness.",
+      culturalContext: "Apple pie has been an American tradition since the colonial era. The phrase 'as American as apple pie' reflects its status as a symbol of American culture and comfort."
+    },
+    {
+      id: '4',
+      title: "Bánh Mì from Bà Nội",
+      elderName: "Linh Nguyen",
+      preservedBy: "Minh Nguyen",
+      imageUrl: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?w=800",
+      date: "Jun 10, 2024",
+      imageHeight: 260,
+      prepTime: "1 hour",
+      servings: "4",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "4 Vietnamese baguettes" },
+        { id: 2, name: "500g pork shoulder" },
+        { id: 3, name: "Pickled daikon and carrot" },
+        { id: 4, name: "Fresh cilantro" },
+        { id: 5, name: "Cucumber slices" },
+        { id: 6, name: "Pâté and mayo" }
+      ],
+      story: "Bà Nội sold bánh mì from a street cart in Saigon for 40 years. She taught me how to balance the five essential flavors: spicy, sour, sweet, salty, and umami.",
+      culturalContext: "Bánh mì represents the fusion of Vietnamese and French colonial influences, combining French baguettes with traditional Vietnamese ingredients and flavors."
+    },
+    {
+      id: '5',
+      title: "Yiayia's Moussaka",
+      elderName: "Sophia Papadopoulos",
+      preservedBy: "Dimitri Papadopoulos",
+      imageUrl: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800",
+      date: "Jun 7, 2024",
+      imageHeight: 220,
+      prepTime: "90 min",
+      servings: "8",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "3 large eggplants" },
+        { id: 2, name: "1 lb ground lamb" },
+        { id: 3, name: "Béchamel sauce" },
+        { id: 4, name: "Tomato sauce" },
+        { id: 5, name: "Cinnamon and nutmeg" },
+        { id: 6, name: "Kefalotiri cheese" }
+      ],
+      story: "Yiayia came from Crete and made moussaka for every family celebration. The secret is adding a touch of cinnamon to the meat sauce - it makes all the difference.",
+      culturalContext: "Moussaka is Greece's national dish, with variations found throughout the Balkans and Middle East. The Greek version with béchamel topping was popularized in the 1920s."
+    },
+    {
+      id: '6',
+      title: "Bubbie's Challah Bread",
+      elderName: "Ruth Goldstein",
+      preservedBy: "Rachel Goldstein",
+      imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
+      date: "Jun 6, 2024",
+      imageHeight: 200,
+      prepTime: "3 hours",
+      servings: "12",
+      videoUrl: null,
+      ingredients: [
+        { id: 1, name: "4 cups bread flour" },
+        { id: 2, name: "2 eggs" },
+        { id: 3, name: "1/3 cup honey" },
+        { id: 4, name: "1/4 cup oil" },
+        { id: 5, name: "1 tbsp yeast" },
+        { id: 6, name: "Egg wash and sesame seeds" }
+      ],
+      story: "Bubbie braided challah every Friday for Shabbat. She taught me the six-strand braid and always saved the end piece for me to snack on fresh from the oven.",
+      culturalContext: "Challah is a ceremonial Jewish bread eaten on Sabbath and holidays. The braiding symbolizes unity, and the tradition dates back thousands of years."
+    },
+  ];
 
-  // Sample data - replace with real data later
-  const recipe = {
-    title: "Abuela's Empanadas",
-    videoUrl: null,
-    imageUrl: "https://images.unsplash.com/photo-1625938145312-880f3b3a5d3d?w=800",
-    elderName: "Rosa Martinez",
-    preservedBy: "Maria Rodriguez",
-    prepTime: "45 min",
-    servings: "6",
-    ingredients: [
-      { id: 1, name: "2 cups all-purpose flour" },
-      { id: 2, name: "1 lb ground beef" },
-      { id: 3, name: "1 large onion, diced" },
-      { id: 4, name: "2 tsp cumin" },
-      { id: 5, name: "1 tsp paprika" },
-      { id: 6, name: "Salt and pepper to taste" }
-    ],
-    story: "My grandmother learned this recipe from her mother in the Dominican Republic. Every Sunday, the whole family would gather in her kitchen to make empanadas together. The smell of cumin and beef would fill the entire house...",
-    culturalContext: "Empanadas are a staple in Latin American cuisine, with each region having its own unique variation. Dominican empanadas are known for their flaky crust and savory meat filling."
-  };
+  const leftColumn = recipes.filter((_, index) => index % 2 === 0);
+  const rightColumn = recipes.filter((_, index) => index % 2 === 1);
 
-  const toggleIngredient = (id: number) => {
-    setSavedIngredients(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
-
-  const addAllToList = () => {
-    setSavedIngredients(new Set(recipe.ingredients.map(i => i.id)));
-  };
+  const RecipeCard = ({ recipe }: { recipe: typeof recipes[0] }) => (
+    <TouchableOpacity 
+      style={styles.card} 
+      activeOpacity={0.9}
+      onPress={() => router.push({
+        pathname: '/(tabs)/recipe' as any,
+        params: { 
+          id: recipe.id,
+          recipeData: JSON.stringify(recipe) // Pass full recipe data
+        }
+      })}
+    >
+      <Image
+        source={{ uri: recipe.imageUrl }}
+        style={[styles.cardImage, { height: recipe.imageHeight }]}
+      />
+      <View style={styles.cardContent}>
+        <Text style={styles.cardTitle} numberOfLines={2}>
+          {recipe.title}
+        </Text>
+        <Text style={styles.cardElder}>From {recipe.elderName}</Text>
+        <Text style={styles.cardDate}>{recipe.date}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
-          <Text style={styles.backButton}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Recipe</Text>
-        <TouchableOpacity onPress={() => setIsSaved(!isSaved)}>
-          <Text style={styles.heartIcon}>{isSaved ? '❤️' : '🤍'}</Text>
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Recipes Blog</Text>
+        <Text style={styles.headerSubtitle}>
+          Discover and browse delicious recipes visually.
+        </Text>
       </View>
 
-      <ScrollView>
-        {/* Video/Image Section */}
-        <View style={styles.mediaContainer}>
-          <Image 
-            source={{ uri: recipe.imageUrl }}
-            style={styles.mediaImage}
-          />
-          {recipe.videoUrl && (
-            <View style={styles.playButtonContainer}>
-              <View style={styles.playButton}>
-                <Text style={styles.playButtonText}>▶</Text>
-              </View>
-            </View>
-          )}
-          {/* Decorative Wave */}
-          <View style={styles.waveOverlay} />
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchIconContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
         </View>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search recipes, ingredients, cultures..."
+          placeholderTextColor="#9CA3AF"
+        />
+      </View>
 
-        {/* Recipe Info */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>{recipe.title}</Text>
-          <Text style={styles.elderName}>From {recipe.elderName}</Text>
-          <Text style={styles.preservedBy}>Preserved by @{recipe.preservedBy}</Text>
-          
-          <View style={styles.metaInfo}>
-            <Text style={styles.metaText}>🕒 {recipe.prepTime}</Text>
-            <Text style={styles.metaText}>🍽️ Serves {recipe.servings}</Text>
+      {/* Masonry Grid */}
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.grid}>
+          {/* Left Column */}
+          <View style={styles.column}>
+            {leftColumn.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
           </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>Start Cooking</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>🛒</Text>
-            </TouchableOpacity>
+          {/* Right Column */}
+          <View style={styles.column}>
+            {rightColumn.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
           </View>
-        </View>
-
-        {/* Tabs */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            onPress={() => setActiveTab('recipe')}
-            style={styles.tab}
-          >
-            <Text style={[
-              styles.tabText,
-              activeTab === 'recipe' && styles.activeTabText
-            ]}>
-              Recipe
-            </Text>
-            {activeTab === 'recipe' && <View style={styles.tabIndicator} />}
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={() => setActiveTab('story')}
-            style={styles.tab}
-          >
-            <Text style={[
-              styles.tabText,
-              activeTab === 'story' && styles.activeTabText
-            ]}>
-              Story
-            </Text>
-            {activeTab === 'story' && <View style={styles.tabIndicator} />}
-          </TouchableOpacity>
-        </View>
-
-        {/* Content Area */}
-        <View style={styles.contentContainer}>
-          {activeTab === 'recipe' ? (
-            <View style={styles.ingredientsCard}>
-              <Text style={styles.ingredientsTitle}>Ingredients</Text>
-              
-              {recipe.ingredients.map((ingredient) => (
-                <View key={ingredient.id} style={styles.ingredientRow}>
-                  <View style={styles.ingredientLeft}>
-                    <View style={styles.checkbox}>
-                      {savedIngredients.has(ingredient.id) && (
-                        <View style={styles.checkboxFilled} />
-                      )}
-                    </View>
-                    <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => toggleIngredient(ingredient.id)}
-                    style={[
-                      styles.addButton,
-                      savedIngredients.has(ingredient.id) && styles.addButtonActive
-                    ]}
-                  >
-                    <Text style={[
-                      styles.addButtonText,
-                      savedIngredients.has(ingredient.id) && styles.addButtonTextActive
-                    ]}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-
-              <View style={styles.ingredientActions}>
-                <TouchableOpacity 
-                  style={styles.addAllButton}
-                  onPress={addAllToList}
-                >
-                  <Text style={styles.addAllButtonText}>Add All to List</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.viewFullButton}>
-                  <Text style={styles.viewFullButtonText}>View Full Recipe</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ) : (
-            <View>
-              {/* The Story */}
-              <View style={styles.storyCard}>
-                <Text style={styles.storyTitle}>📖 The Story</Text>
-                <Text style={styles.storyText}>{recipe.story}</Text>
-              </View>
-
-              {/* Cultural Context */}
-              <View style={styles.culturalCard}>
-                <Text style={styles.culturalTitle}>🌍 Cultural Context</Text>
-                <Text style={styles.culturalText}>{recipe.culturalContext}</Text>
-              </View>
-            </View>
-          )}
         </View>
       </ScrollView>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navTextActive}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={styles.navIcon}>🔍</Text>
+          <Text style={styles.navText}>Search</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => router.push('/(tabs)/upload' as any)}
+        >
+          <Text style={styles.navIcon}>➕</Text>
+          <Text style={styles.navText}>Add</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navButton}>
+          <Text style={styles.navIcon}>❤️</Text>
+          <Text style={styles.navText}>Saved</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.navButton}
+          onPress={() => router.push('/(tabs)/profile' as any)}
+
+        >
+          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navText}>Profile</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -203,303 +265,137 @@ export default function RecipeDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F9FAFB', // Matches recipe detail page
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  backButton: {
-    fontSize: 28,
-    color: '#4B5563',
+    paddingTop: 16,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  heartIcon: {
-    fontSize: 24,
-  },
-  mediaContainer: {
-    height: 280,
-    backgroundColor: '#BAE6FD',
-    position: 'relative',
-  },
-  mediaImage: {
-    width: '100%',
-    height: '100%',
-  },
-  playButtonContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  playButton: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  playButtonText: {
-    color: 'white',
-    fontSize: 30,
-    marginLeft: 5,
-  },
-  waveOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#86A952',
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-  },
-  infoContainer: {
-    backgroundColor: 'white',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 8,
-  },
-  elderName: {
-    fontSize: 14,
-    color: '#4B5563',
+    color: '#1F2937', // Matches recipe detail
     marginBottom: 4,
   },
-  preservedBy: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginBottom: 12,
-  },
-  metaInfo: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 16,
-  },
-  metaText: {
+  headerSubtitle: {
     fontSize: 14,
-    color: '#374151',
+    color: '#6B7280', // Matches recipe detail
   },
-  actionButtons: {
+  searchContainer: {
     flexDirection: 'row',
-    gap: 12,
-  },
-  primaryButton: {
-    flex: 1,
-    backgroundColor: '#059669',
-    paddingVertical: 14,
-    borderRadius: 25,
     alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    width: 50,
-    height: 50,
-    borderWidth: 2,
-    borderColor: '#059669',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: 20,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF', // Changed to white
+    marginHorizontal: 16,
+    marginBottom: 16,
     paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
-  tab: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    position: 'relative',
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 8,
   },
-  tabText: {
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1F2937',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  grid: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingBottom: 100,
+  },
+  column: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  cardImage: {
+    width: '100%',
+    backgroundColor: '#E5E7EB',
+  },
+  cardContent: {
+    padding: 12,
+  },
+  cardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#6B7280',
+    color: '#1F2937', // Matches recipe detail
+    marginBottom: 4,
   },
-  activeTabText: {
-    color: '#047857',
+  cardElder: {
+    fontSize: 13,
+    color: '#4B5563', // Matches recipe detail
+    marginBottom: 2,
   },
-  tabIndicator: {
+  cardDate: {
+    fontSize: 12,
+    color: '#6B7280', // Matches recipe detail
+  },
+  bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 3,
-    backgroundColor: '#059669',
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-  },
-  contentContainer: {
-    padding: 16,
-  },
-  ingredientsCard: {
-    backgroundColor: '#84CC16',
-    borderRadius: 24,
-    padding: 24,
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingVertical: 8,
+    paddingBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  ingredientsTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 20,
-  },
-  ingredientRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.4)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  ingredientLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: 12,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: '#1F2937',
-    borderRadius: 4,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxFilled: {
-    width: 12,
-    height: 12,
-    backgroundColor: '#059669',
-    borderRadius: 2,
-  },
-  ingredientName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1F2937',
-    flex: 1,
-  },
-  addButton: {
-    width: 36,
-    height: 36,
-    backgroundColor: 'white',
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonActive: {
-    backgroundColor: '#059669',
-  },
-  addButtonText: {
-    fontSize: 20,
-    color: '#374151',
-  },
-  addButtonTextActive: {
-    color: 'white',
-  },
-  ingredientActions: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 12,
-  },
-  addAllButton: {
-    flex: 1,
-    backgroundColor: '#1F2937',
-    paddingVertical: 16,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  addAllButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  viewFullButton: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingVertical: 16,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  viewFullButtonText: {
-    color: '#1F2937',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  storyCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 8,
   },
-  storyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 12,
+  navButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 4,
   },
-  storyText: {
-    fontSize: 16,
-    color: '#374151',
-    lineHeight: 24,
+  navIcon: {
+    fontSize: 24,
+    marginBottom: 2,
   },
-  culturalCard: {
-    backgroundColor: '#FEF3C7',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#FCD34D',
+  navText: {
+    fontSize: 11,
+    color: '#6B7280',
   },
-  culturalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 12,
+  navTextActive: {
+    fontSize: 11,
+    color: '#059669', // Green accent matches recipe page
+    fontWeight: '600',
   },
-  culturalText: {
-    fontSize: 16,
-    color: '#374151',
-    lineHeight: 24,
-  },
+  searchIconContainer: {
+  width: 32,
+  height: 32,
+  backgroundColor: '#059669',
+  borderRadius: 16,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginRight: 12,
+},
 });
